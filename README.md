@@ -1,4 +1,4 @@
-# Mini Virtual Cell for K562 perturbation response
+# K562 Perturbation Benchmark
 
 使用 Norman et al. (2019) 的 K562 CRISPRa Perturb-seq 数据，预测单基因和双基因扰动后的
 平均转录组响应。输入为同批次的 control expression 和扰动身份，输出为 2,000 个基因的表达：
@@ -147,7 +147,7 @@ adapter，与 control 编码和原有 reference pseudobulk 一起送入新建的
 ## 6. 项目结构
 
 ```text
-miniVC_K562/
+k562-perturbation-benchmark/
 ├── README.md
 ├── environment.yml
 ├── requirements.txt
