@@ -1,0 +1,58 @@
+{
+  "unseen_combo_fold0": {
+    "test_conditions": 27,
+    "validation_conditions": 13,
+    "training_conditions": 91,
+    "pseudobulks_by_split": {
+      "train": 1576,
+      "test": 224,
+      "validation": 112
+    },
+    "genes": 2000
+  },
+  "unseen_combo_fold1": {
+    "test_conditions": 26,
+    "validation_conditions": 13,
+    "training_conditions": 92,
+    "pseudobulks_by_split": {
+      "train": 1584,
+      "test": 216,
+      "validation": 112
+    },
+    "genes": 2000
+  },
+  "unseen_combo_fold2": {
+    "test_conditions": 26,
+    "validation_conditions": 13,
+    "training_conditions": 92,
+    "pseudobulks_by_split": {
+      "train": 1584,
+      "test": 216,
+      "validation": 112
+    },
+    "genes": 2000
+  },
+  "unseen_combo_fold3": {
+    "test_conditions": 26,
+    "validation_conditions": 13,
+    "training_conditions": 92,
+    "pseudobulks_by_split": {
+      "train": 1584,
+      "test": 216,
+      "validation": 112
+    },
+    "genes": 2000
+  },
+  "unseen_combo_fold4": {
+    "test_conditions": 26,
+    "validation_conditions": 13,
+    "training_conditions": 92,
+    "pseudobulks_by_split": {
+      "train": 1584,
+      "test": 216,
+      "validation": 112
+    },
+    "genes": 2000
+  },
+  "all_test_conditions": 131
+}

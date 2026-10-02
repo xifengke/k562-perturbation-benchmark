@@ -1,0 +1,23 @@
+{
+  "experiment": "baselines",
+  "seed": 42,
+  "data_dir": "data/processed/norman_v0_1",
+  "output_dir": "results/baselines",
+  "schemes": ["seen", "unseen_combo", "unseen_gene"],
+  "models": ["no_change", "mean_response", "ridge", "mlp"],
+  "ridge_alphas": [0.01, 0.1, 1.0, 10.0, 100.0],
+  "de_top_k": [20, 50, 100],
+  "mlp": {
+    "device": "auto",
+    "hidden_dims": [256, 256],
+    "dropout": 0.1,
+    "batch_size": 128,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "gradient_clip_norm": 5.0,
+    "max_epochs": 300,
+    "patience": 30,
+    "min_delta": 0.000001,
+    "log_every": 10
+  }
+}

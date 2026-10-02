@@ -1,0 +1,35 @@
+{
+  "seed": 42,
+  "data": {
+    "input_path": "data/raw/NormanWeissman2019_filtered.h5ad",
+    "output_dir": "data/processed/norman_scgpt_folds",
+    "report_path": "reports/scgpt_folds_preprocessing.md"
+  },
+  "qc": {
+    "require_good_coverage": true,
+    "require_single_cell": true,
+    "min_counts": 1000,
+    "min_genes": 500,
+    "max_percent_mito": 20.0
+  },
+  "normalization": {
+    "target_sum": 10000.0
+  },
+  "hvg": {
+    "n_top_genes": 2000,
+    "min_train_cells": 50,
+    "mean_bins": 20,
+    "include_perturbation_genes": true
+  },
+  "splits": {
+    "validation_fraction": 0.10,
+    "test_fraction": 0.20,
+    "schemes": [
+      "unseen_combo_fold0",
+      "unseen_combo_fold1",
+      "unseen_combo_fold2",
+      "unseen_combo_fold3",
+      "unseen_combo_fold4"
+    ]
+  }
+}

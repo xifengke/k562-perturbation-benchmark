@@ -1,0 +1,25 @@
+{
+  "seed": 42,
+  "raw_path": "data/raw/NormanWeissman2019_filtered.h5ad",
+  "checkpoint_dir": "checkpoints/scgpt_whole_human",
+  "data_dir": "data/processed/norman_v0_1",
+  "output_dir": "results/scgpt_secondary",
+  "schemes": ["seen", "unseen_gene"],
+  "modes": ["frozen", "finetuned"],
+  "de_top_k": [20, 50, 100],
+  "input": {
+    "n_control_cells_per_group": 4,
+    "max_tokens": 512
+  },
+  "training": {
+    "device": "auto",
+    "head_lr": 0.001,
+    "backbone_lr": 0.00001,
+    "n_unfrozen_layers": 2,
+    "weight_decay": 0.0001,
+    "max_epochs": 300,
+    "patience": 25,
+    "min_delta": 0.000001,
+    "log_every": 25
+  }
+}

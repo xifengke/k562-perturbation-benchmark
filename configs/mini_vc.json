@@ -1,0 +1,32 @@
+{
+  "experiment": "mini_vc",
+  "seed": 42,
+  "data_dir": "data/processed/norman_v0_1",
+  "output_dir": "results/mini_vc",
+  "schemes": ["seen", "unseen_combo", "unseen_gene"],
+  "de_top_k": [20, 50, 100],
+  "model": {
+    "encoder_hidden_dims": [512, 256],
+    "latent_dim": 128,
+    "perturbation_embedding_dim": 64,
+    "transition_hidden_dims": [256, 256],
+    "dropout": 0.1
+  },
+  "training": {
+    "device": "auto",
+    "batch_size": 128,
+    "learning_rate": 0.001,
+    "lr_scheduler_factor": 0.5,
+    "lr_scheduler_patience": 12,
+    "minimum_learning_rate": 0.00001,
+    "weight_decay": 0.0001,
+    "gradient_clip_norm": 5.0,
+    "max_epochs": 400,
+    "patience": 40,
+    "min_delta": 0.000001,
+    "response_weight": 1.0,
+    "reconstruction_weight": 0.2,
+    "latent_alignment_weight": 0.1,
+    "log_every": 10
+  }
+}

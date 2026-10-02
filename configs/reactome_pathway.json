@@ -1,0 +1,8 @@
+{
+  "baseline_config": "configs/baseline_scgpt_folds.json",
+  "archive_path": "data/external/reactome/ReactomePathways.gmt.zip",
+  "output_dir": "results/pathway_knowledge",
+  "min_genes": 2,
+  "max_genes": 30,
+  "shuffle_seeds": [1001, 1002, 1003]
+}

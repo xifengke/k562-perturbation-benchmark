@@ -1,0 +1,34 @@
+{
+  "primary_scheme": "unseen_combo",
+  "n_test_conditions": 13,
+  "median_condition": "ETS2_CEBPE",
+  "median_condition_mini_vc_pearson_delta": 0.9258260130882264,
+  "pca_explained_variance_ratio": [
+    0.37141406536102295,
+    0.15465372800827026
+  ],
+  "condition_wins": {
+    "pearson_delta": {
+      "ridge": 4,
+      "mlp": 3,
+      "mini_vc": 6
+    },
+    "top_20_recovery": {
+      "ridge": 5,
+      "mlp": 3,
+      "mini_vc": 9
+    }
+  },
+  "condition_win_ties": {
+    "pearson_delta": 0,
+    "top_20_recovery": 3
+  },
+  "figures": {
+    "training_curves": "results/figures/training_curves.png",
+    "model_comparison": "results/figures/model_comparison.png",
+    "per_condition": "results/figures/unseen_combo_per_condition.png",
+    "delta_scatter": "results/figures/unseen_combo_delta_scatter.png",
+    "pca": "results/figures/unseen_combo_pca.png",
+    "de_heatmap": "results/figures/unseen_combo_de_heatmap_median.png"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "model": "mean_response",
+  "scheme": "unseen_gene",
+  "split": "test",
+  "n_conditions": 27,
+  "mse_all": 0.01083619424348904,
+  "rmse_all": 0.09279685081155212,
+  "pearson_all": 0.9193499794712773,
+  "spearman_all": 0.9413501698276442,
+  "pearson_delta": 0.46759895814789665,
+  "spearman_delta": 0.4423517491741774,
+  "cosine_delta": 0.4747774260877459,
+  "mse_de": 0.15890192706137896,
+  "pearson_de": 0.5119250538172545,
+  "spearman_de": 0.5670278138925003,
+  "top_20_recovery": 0.3333333333333333,
+  "top_50_recovery": 0.3725925925925926,
+  "top_100_recovery": 0.45185185185185184
+}

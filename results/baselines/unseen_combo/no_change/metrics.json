@@ -1,0 +1,19 @@
+{
+  "model": "no_change",
+  "scheme": "unseen_combo",
+  "split": "test",
+  "n_conditions": 13,
+  "mse_all": 0.009432443990730323,
+  "rmse_all": 0.0941855672460336,
+  "pearson_all": 0.9209469831906832,
+  "spearman_all": 0.9514634328529942,
+  "pearson_delta": null,
+  "spearman_delta": null,
+  "cosine_delta": null,
+  "mse_de": 0.14962383101765925,
+  "pearson_de": null,
+  "spearman_de": null,
+  "top_20_recovery": null,
+  "top_50_recovery": null,
+  "top_100_recovery": null
+}

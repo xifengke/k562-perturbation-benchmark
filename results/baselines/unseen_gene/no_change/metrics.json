@@ -1,0 +1,19 @@
+{
+  "model": "no_change",
+  "scheme": "unseen_gene",
+  "split": "test",
+  "n_conditions": 27,
+  "mse_all": 0.013581435390127202,
+  "rmse_all": 0.10208694981756034,
+  "pearson_all": 0.8994736252007661,
+  "spearman_all": 0.9338330923044954,
+  "pearson_delta": null,
+  "spearman_delta": null,
+  "cosine_delta": null,
+  "mse_de": 0.1991000312414986,
+  "pearson_de": null,
+  "spearman_de": null,
+  "top_20_recovery": null,
+  "top_50_recovery": null,
+  "top_100_recovery": null
+}

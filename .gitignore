@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.venv/
+venv/
+build/
+dist/
+*.egg-info/
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Large and generated data
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/external/*
+
+# Training and evaluation artifacts
+results/**
+!results/**/
+!results/.gitkeep
+!results/**/*.csv
+!results/**/metrics.json
+!results/figures/*.png
+!results/figures/analysis_summary.json
+results/**/*partial*.csv
+checkpoints/
+logs/
+vendor/
+
+# Local development notes and placeholder notebooks
+reports/stage10_completion.md
+reports/scgpt_project_completion.md
+notebooks/
+
+# Local credentials
+.env
+.env.*
+!.env.example
+.aws/
