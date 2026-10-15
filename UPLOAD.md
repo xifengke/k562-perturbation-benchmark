@@ -4,7 +4,7 @@
 
 ## 上传
 
-- 根目录：`README.md`、`UPLOAD.md`、`.gitignore`、`environment.yml`、`requirements.txt`、`requirements-common.txt`。
+- 根目录：`README.md`、`UPLOAD.md`、`LICENSE`、`.gitignore`、`environment.yml`、`requirements.txt`、`requirements-common.txt`。
 - `src/`、`scripts/`、`configs/`、`tests/` 的源码和配置，不包含缓存。
 - `data/README.md`。
 - `reports/` 中的数据、方法、结果报告，以及 `scgpt_fold_audit.json`。
@@ -32,6 +32,6 @@
 1. 初始化仓库后，先查看待提交文件清单，确认没有大数据、模型权重或本地凭据。
 2. 运行 `python -m unittest discover -s tests -v`，以及 `python -m compileall -q src scripts tests`。
 3. 确认 README 和报告中的图、CSV 与源码链接均包含在上传范围内。
-4. 自有代码尚未指定开源许可证。若决定授予开源使用权限，需要添加根目录 `LICENSE`，并同步 README；第三方 scGPT 的 MIT 许可证继续保留。
+4. 自有代码采用根目录 [MIT 许可证](LICENSE)，版权署名为 `Copyright (c) 2026 xifengke`；分发时保留许可证和版权声明。第三方 scGPT 的 MIT 许可证与原有声明继续保留，数据和权重遵循各自条款。
 
 代码和文档的编写、整理使用了 Codex。实验设置和数值结果见配置、日志、逐条件指标和报告。

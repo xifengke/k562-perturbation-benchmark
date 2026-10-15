@@ -446,6 +446,8 @@ Reactome 通路特征、模型前向/反向、scGPT 基因映射与分箱、指�
 及[官方项目](https://github.com/bowang-lab/scGPT)。
 使用 V0.3 的通路知识还应注明 [Reactome 数据来源](https://reactome.org/download-data)。
 数据来源和许可说明见 [data/README.md](data/README.md)。
-`src/mini_vc/scgpt_core/` 保留上游 MIT 许可证和来源说明；项目自有代码尚未指定开源许可证。
+项目自有代码采用 [MIT 许可证](LICENSE)，版权署名为 `Copyright (c) 2026 xifengke`。
+`src/mini_vc/scgpt_core/` 继续保留上游 MIT 许可证、版权声明和来源说明；
+第三方数据、预训练权重和其他资源遵循各自条款，不因本项目的 MIT 许可而改变。
 
 代码与文档的编写、整理使用了 Codex。实验设置和数值结果见配置、日志、逐条件指标和报告。
