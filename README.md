@@ -323,6 +323,25 @@ python scripts/summarize_reactome.py
 不是本实验测得的蛋白数量。相同五折上训练 Ridge、MLP，并各做 3 次随机打乱通路对应关系的
 对照。详细结果见 [`reports/reactome_pathway_results.md`](reports/reactome_pathway_results.md)。
 
+### 8.10 复算五折单基因响应相加基线
+
+在第 7 节的项目环境中，从仓库根目录运行以下命令，使用 CPU 复算相加基线与已保存的 Mini-VC 预测。
+
+```bash
+python -B reports/additive_single_gene_baseline/evaluate_additive.py
+```
+
+复算使用以下本地输入，其中 `<fold>` 为 `unseen_combo_fold0` 至 `unseen_combo_fold4`。
+
+| 输入 | 文件 | 仓库中的获取或生成入口 |
+|---|---|---|
+| 五折处理数据 | `data/processed/norman_scgpt_folds/<fold>/` 中的 `expression.npy`、`samples.csv`、`genes.csv` 和 `split_details.json` | `python scripts/download_data.py` 获取原始数据，`python scripts/preprocess.py --config configs/preprocess_scgpt_folds.json` 生成五折数据 |
+| Mini-VC 五折预测与基因顺序 | `results/scgpt_folds/mini_vc/<fold>/mini_vc/` 中的 `predictions_test.npz` 和 `checkpoint.pt` | `python scripts/train.py --config configs/mini_vc_scgpt_folds.json` 生成预测与 checkpoint |
+| 历史评分参照 | Mini-VC 各折同目录的 `metrics.json`、`metrics_per_condition.csv`，以及 `results/scgpt_folds/model_comparison_131_conditions.csv` | 随仓库提供，用于核验复算分数 |
+
+已有这些输入时，复算只读取本地文件，并将逐组合、逐折和总体结果写入
+`reports/additive_single_gene_baseline/`。已发布的表格可直接在 GitHub 查看。
+
 ## 9. 评价指标
 
 同时评价绝对表达和相对 control 的响应：
@@ -383,6 +402,27 @@ Ridge 的表现与加性近似适合这个 pseudobulk 任务的解释相容，�
 原始 `seen` 划分中，冻结/微调 scGPT 的 Pearson 分别为 0.7630/0.7634；原始
 `unseen_gene` 划分中分别为 0.4450/0.4641，后者仍低于 Ridge 的 0.5224。
 这些是已观察过的原始划分，属于补充分析。
+
+### 五折补充对照：单基因响应相加
+
+两个组成基因各自的响应已在训练集中测过，测试时预测从未见过的双基因组合。
+相加基线直接把同折训练集、同一 GEM group 内的两个单基因相对对照的响应相加。
+两种方法沿用原五折，对同一批 131 个组合做逐条件宏平均。
+
+| 模型 | All-gene MSE ↓ | Response Pearson ↑ | Top-100 recovery ↑ |
+|---|---:|---:|---:|
+| 单基因响应相加 | 0.002855 | **0.887543** | 70.66% |
+| Mini-VC | **0.001935** | 0.883719 | **71.63%** |
+
+Mini-VC 的宏平均全基因 MSE 降低 32.2%，五折均降低，Top-100 recovery 提高约 0.97 个百分点。
+相加基线的总体响应 Pearson 略高，优势主要来自 `fold2`。在 `CEBPE_CEBPA` 上，两种方法的
+响应 Pearson 均约为 0.9674，预测出的响应图样相近，但 Mini-VC 的全基因 MSE 从相加基线的
+0.020050 降至 0.002307。结果适用于本次 K562 CRISPRa 实验中有同批次组成单基因测量的条件。
+
+参见[详细报告](reports/additive_single_gene_baseline/detailed_report.txt)、
+[总体汇总](reports/additive_single_gene_baseline/overall.csv)、
+[逐组合比较](reports/additive_single_gene_baseline/per_condition.csv)和
+[复算脚本](reports/additive_single_gene_baseline/evaluate_additive.py)。
 
 ### V0.3：Reactome 通路知识对照
 

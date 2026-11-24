@@ -1,0 +1,150 @@
+Norman K562 五折实验 | 单基因响应相加与 Mini-VC 的配对比较
+
+一、结论
+
+在 131 个未见双基因组合上，直接相加的响应 Pearson 為 0.887543，比 Mini-VC 的
+0.883719 高 0.003824。Mini-VC 在全基因 MSE 和 Top-100 recovery 上占优，宏平均 MSE
+从 0.002855 降到 0.001935，相对下降 32.2%，Top-100 recovery 从 0.706565 升到
+0.716260，增加 0.97 个百分点。两种方法的相对表现随指标和组合而变化。
+
+二、数据和匹配过程
+
+实验使用本机已经处理好的 Norman K562 CRISPRa 五折矩阵。每个组合只在一个折的测试集出现，
+同时涵盖 GEM group 1 至 8。五折共有 131 × 8 = 1,048 条双扰动测试记录。每折使用该折
+训练数据原先选出的 2,000 个基因，列顺序以该折的 genes.csv 为准。表达值是先做细胞级
+log(1 + 归一化计数)，再在每个扰动、划分和 GEM group 内平均得到的 pseudobulk。
+
+对某折 GEM group g 的测试组合 A_B，按以下过程预测。
+
+1. 在同一折训练集查找 GEM group g 的单基因 A、单基因 B 和非靶向对照。
+2. 分别用 A、B 的训练表达向量减去该训练对照，得到 ΔA 和 ΔB。
+3. 对 2,000 个基因逐元素相加，得到预测响应 ΔA + ΔB。
+4. 在同一个 GEM group 中加回该条测试记录自己的测试对照，得到预测表达。
+
+    预测表达(A_B, g) = 测试对照(g) + (训练A(g) - 训练对照(g))
+                                   + (训练B(g) - 训练对照(g))
+
+1,048 条测试记录都找到了唯一的同折、同 GEM group 训练来源。测试双扰动的真实表达只在评分
+环节使用。基线直接由已有矩阵计算，所需的基因顺序、对照和 Mini-VC 预测均来自本地文件。
+
+以 fold0 的 AHR_FEV、GEM group 1 为例，测试记录是 pb_00000，训练 AHR 是 pb_00224，
+训练 FEV 是 pb_00688，训练对照是 pb_01792，测试对照是 pb_00216。
+用该折第一个表达基因 FO538757.2 演示，训练 AHR、FEV 与对照的表达分别约为
+0.381483、0.251172 和 0.287688。两个单基因响应约为 +0.093795 和 -0.036516，
+相加得到 +0.057279。加回测试对照 0.278306 后，预测表达约为 0.335585。
+其余 1,999 个基因做同样的运算。这些 sample_id 需要与折名一起查询。
+
+三、如何保证比较口径一致
+
+逐折读取 Mini-VC 的 predictions_test.npz，逐行核对样本 ID 与扰动标签，并逐元素核对
+真实表达和测试对照矩阵。保存的 NPZ 只含表达矩阵，基因名从该折 Mini-VC 的训练
+checkpoint 读取，与该折 genes.csv 的基因列表逐列比较。
+
+两种方法都调用仓库原 evaluate_predictions 函数。对每个组合，分别将 8 个 GEM group
+的真实表达、预测表达和测试对照做等权平均，再用表达质心减去对照质心得到响应向量。
+三个主要指标都在这些组合质心上计算。
+
+- 全基因 MSE。对 2,000 个基因的预测表达与真实表达之差取平方再平均，越低越好。
+- 响应 Pearson。计算预测和真实响应向量在 2,000 个基因上的 Pearson 相关，越高越好。
+  它衡量响应形状，整体缩放可以改变 MSE 而几乎保留 Pearson。
+- Top-100 recovery。分别按预测和真实响应的绝对值取前 100 个基因，计算两组交集数
+  除以 100，越高越好。这个指标关注强响应基因能否找回。
+
+先得到每个组合的分数，再对测试组合取等权平均。五折总体以全部 131 个组合为平均单位，
+折内平均则使用各折的 27 或 26 个组合。
+
+四、逐折与总体结果
+
+下表每对数字按“相加 / Mini-VC”排列。
+
+折       组合数  记录数  全基因 MSE                 响应 Pearson            Top-100 recovery
+fold0       27     216   0.003341 / 0.001926        0.868503 / 0.876451     0.688889 / 0.705556
+fold1       26     208   0.002749 / 0.001818        0.895941 / 0.896954     0.726154 / 0.750000
+fold2       26     208   0.002300 / 0.002016        0.894174 / 0.859609     0.699615 / 0.680385
+fold3       26     208   0.003505 / 0.002109        0.890045 / 0.890895     0.719615 / 0.728077
+fold4       26     208   0.002362 / 0.001808        0.889786 / 0.894965     0.699231 / 0.717692
+总体       131   1,048   0.002855 / 0.001935        0.887543 / 0.883719     0.706565 / 0.716260
+
+Mini-VC 在五折的平均 MSE 均较低，在 fold0、fold1、fold3、fold4 的 Pearson 和
+Top-100 recovery 也均较高。fold2 的相加基线 Pearson 高 0.034565，超过其余四折
+Mini-VC 的 Pearson 优势对总体均值的贡献。逐组合看，Mini-VC 的 Pearson 胜场仍更多，
+其配对差值的中位数为 +0.003226，均值为 -0.003824。胜场反映优势出现的频次，均值还
+受到每次领先幅度的影响。
+
+指标                  相加胜   Mini-VC 胜   持平
+全基因 MSE                 37          94      0
+响应 Pearson              58          73      0
+Top-100 recovery          57          68      6
+
+三项均胜的组合分别有 27 个和 58 个。其余 46 个组合的指标有输有赢或至少一项持平。
+
+五、组合实例与“接近”的含义
+
+以下数值仍按“相加 / Mini-VC”排列。
+
+组合               全基因 MSE              响应 Pearson         Top-100 recovery
+LHX1_ELMSAN1       0.000847 / 0.003351      0.923247 / 0.648057   0.68 / 0.64
+KLF1_COL2A1        0.002699 / 0.005541      0.868190 / 0.627563   0.62 / 0.54
+ZBTB10_ELMSAN1     0.002094 / 0.005244      0.897174 / 0.754960   0.70 / 0.56
+MAP2K3_IKZF3       0.001605 / 0.001571      0.957051 / 0.955899   0.72 / 0.75
+POU3F2_CBFA2T3     0.001873 / 0.001956      0.841917 / 0.855784   0.64 / 0.64
+CEBPE_CEBPA        0.020050 / 0.002307      0.967438 / 0.967449   0.86 / 0.87
+CEBPB_CEBPA        0.018455 / 0.003532      0.931037 / 0.946144   0.80 / 0.83
+MAPK1_PRTG         0.003553 / 0.000699      0.809432 / 0.917882   0.55 / 0.72
+CBL_UBASH3A        0.004595 / 0.002390      0.753965 / 0.874556   0.46 / 0.56
+PTPN12_UBASH3A     0.003927 / 0.001673      0.879615 / 0.969864   0.63 / 0.82
+
+- 相加优势突出的例子包括 LHX1_ELMSAN1，响应 Pearson 高 0.275190，也是相加在 Pearson
+  上领先幅度最大的组合。ZBTB10_ELMSAN1 的全基因 MSE 低 0.003150，是相加在 MSE 上
+  领先幅度最大的组合。PTPN12_SNAI1 的 Top-100 recovery 高 0.18，是相加在该指标上
+  领先幅度最大的组合。
+- Mini-VC 的 MSE 改善最大的是 CEBPE_CEBPA，MSE 下降约 88.5%，两种方法的 Pearson
+  都约为 0.9674。CBL_UBASH3A 的 Pearson 改善最大，为 +0.120590。PTPN12_UBASH3A
+  的 Top-100 recovery 改善最大，为 +0.19。MAPK1_PRTG 则同时出现 MSE 明显下降、
+  Pearson 增加 0.108450 及 Top-100 recovery 增加 0.17。
+- “接近”使用描述性阈值。以相加 MSE 为分母，相对 MSE 差距不超过 5% 的有 9 个组合。
+  Pearson 绝对差距不超过 0.01 的有 25 个，Top-100 recovery 绝对差距不超过 0.02 的
+  有 34 个，三项同时满足的有 0 个。例如 MAP2K3_IKZF3 的 MSE 差距约 2.17%、Pearson
+  差距约 0.00115。POU3F2_CBFA2T3 的 MSE 差距约 4.45%、Top-100 recovery 持平。
+
+六、三项均胜的组合名单
+
+单基因相加，27 个
+AHR_FEV, AHR_KLF1, CEBPE_CNN1, DUSP9_SNAI1, ETS2_MAP7D1, ETS2_MAPK1, IRF1_SET,
+KLF1_BAK1, KLF1_CLDN6, KLF1_COL2A1, KLF1_FOXA1, LHX1_ELMSAN1, LYL1_CEBPB, LYL1_IER5L,
+MAP2K3_ELMSAN1, MAP2K6_ELMSAN1, PTPN12_SNAI1, RHOXF2_SET, SAMD1_ZBTB1, SET_KLF1,
+SGK1_S1PR2, SGK1_TBX3, SNAI1_UBASH3B, TMSB4X_BAK1, ZBTB10_ELMSAN1, ZBTB10_SNAI1,
+ZNF318_FOXL2
+
+Mini-VC，58 个
+BCL2L11_TGFBR2, CBL_CNN1, CBL_PTPN12, CBL_PTPN9, CBL_TGFBR2, CBL_UBASH3A, CBL_UBASH3B,
+CDKN1C_CDKN1B, CEBPB_CEBPA, CEBPB_OSR2, CEBPE_CEBPA, CEBPE_CEBPB, CEBPE_PTPN12,
+CNN1_MAPK1, CNN1_UBASH3A, DUSP9_ETS2, ETS2_IGDCC3, ETS2_IKZF3, ETS2_PRTG, FEV_ISL2,
+FOSB_CEBPB, FOSB_CEBPE, FOSB_IKZF3, FOSB_OSR2, FOSB_PTPN12, FOXA1_FOXF1, FOXA1_FOXL2,
+FOXA1_HOXB9, FOXA3_FOXA1, FOXA3_FOXF1, FOXA3_FOXL2, FOXA3_HOXB9, FOXF1_FOXL2,
+FOXF1_HOXB9, FOXL2_MEIS1, IGDCC3_MAPK1, JUN_CEBPA, KLF1_CEBPA, MAP2K6_IKZF3, MAPK1_PRTG,
+MAPK1_TGFBR2, PLK4_STIL, POU3F2_FOXL2, PRDM1_CBFA2T3, PTPN12_PTPN9, PTPN12_UBASH3A,
+PTPN12_ZBTB25, RHOXF2_ZBTB25, SAMD1_PTPN12, SAMD1_TGFBR2, SAMD1_UBASH3B, SET_CEBPE,
+SNAI1_DLX2, UBASH3B_CNN1, UBASH3B_PTPN12, UBASH3B_PTPN9, UBASH3B_ZBTB25, ZBTB10_DLX2
+
+七、核验、复算与结论边界
+
+从保存的 Mini-VC 预测复算出的分数与历史逐组合、逐折和总体指标一致。逐组合的 float32
+相关性核验使用 3×10⁻⁷ 的绝对容差。另用独立计算核验了 1,048 条记录的样本来源和相加
+基线的 393 个主要分数。相同命令连续两次生成的 CSV 和简短结论逐字节一致。历史 Mini-VC
+参考文件前后的 SHA-256 一致，仓库现有 25 项测试全部通过。
+
+同目录下，per_condition.csv 可按 fold 和 perturbation 查 131 个组合的全部配对指标，
+sample_matches.csv 可按 fold、perturbation 和 gemgroup 追溯每条测试记录的两个训练单基因、
+训练对照和测试对照。per_fold.csv 与 overall.csv 保留所有原评估指标。
+
+在仓库 README 第 7 节的项目环境中，从仓库根目录运行以下命令。
+
+python -B reports/additive_single_gene_baseline/evaluate_additive.py
+
+README 第 8.10 节列出了所需的五折数据、Mini-VC 预测、checkpoint 和历史评分参照，
+以及仓库中获取或生成这些文件的命令。
+
+本次结果针对同一 Norman K562 CRISPRa 数据集的 log-normalized pseudobulk，且每条测试记录
+都有同折、同 GEM group 的组成单基因测量。跨细胞系、扰动方式或外部队列的表现仍需独立验证。
+评分差异描述预测准确度，无法单凭这次比较推断某对基因存在生物互作。
